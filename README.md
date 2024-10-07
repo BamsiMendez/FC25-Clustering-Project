@@ -1,142 +1,38 @@
-<div align="center">
-    <a href="https://php.net">
-        <img
-            alt="PHP"
-            src="https://www.php.net/images/logos/new-php-logo.svg"
-            width="150">
-    </a>
-</div>
+# Proyecto de Clustering en el videojuego FC25 usando K-means y 3 métricas (distancias) distintas.
+Trabajamos usando una base de datos con todos los futbolistas (masculinos y femeninos) del popular juego FC25, de la empresa EA Sports (antes conocido como FIFA). Dicha base de datos la obtuvimos de la plataforma Kaggle, donde todavía se encuentra disponible. Luego, manipulamos manualmente los datos para eliminar las columnas de datos despreciables, es decir, aquellos que no nos aportaban información relevante, o peor aún, entorpecían nuestro análisis.
+## Primera parte: EDA
+1. **Importación de librerías y carga de datos:**  
+   El primer paso fue importar las librerías necesarias para el manejo y visualización de los datos. Utilizamos librerías populares como `numpy` para operaciones de álgebra lineal, `pandas` para la manipulación de dataframes, y `matplotlib` y `seaborn` para la generación de gráficos.
 
-# The PHP Interpreter
+2. **Resumen estadístico y exploración inicial:**  
+   Posteriormente, generamos un resumen estadístico de los datos para obtener una vista general de las principales características numéricas, como el promedio, desviación estándar, valores mínimos y máximos, entre otros. También revisamos la estructura del dataset, verificando el número de filas, columnas, tipos de datos y valores nulos. Esto nos permitió identificar rápidamente cualquier anomalía o valores que debieran ser tratados más adelante.
 
-PHP is a popular general-purpose scripting language that is especially suited to
-web development. Fast, flexible and pragmatic, PHP powers everything from your
-blog to the most popular websites in the world. PHP is distributed under the
-[PHP License v3.01](LICENSE).
+3. **Análisis de las ligas y nacionalidades:**  
+   Realizamos un análisis de las 10 ligas con mayor cantidad de jugadores, visualizando los resultados mediante un gráfico de barras. Del mismo modo, analizamos la distribución de jugadores por nacionalidad y el valor promedio de la calificación general (OVR) por país, lo cual nos ayudó a entender mejor la representación global en el dataset.
 
-[![Push](https://github.com/php/php-src/actions/workflows/push.yml/badge.svg)](https://github.com/php/php-src/actions/workflows/push.yml)
-[![Build status](https://travis-ci.com/php/php-src.svg?branch=master)](https://travis-ci.com/github/php/php-src)
-[![Build status](https://ci.appveyor.com/api/projects/status/meyur6fviaxgdwdy/branch/master?svg=true)](https://ci.appveyor.com/project/php/php-src)
-[![Build Status](https://dev.azure.com/phpazuredevops/php/_apis/build/status/php.php-src?branchName=master)](https://dev.azure.com/phpazuredevops/php/_build/latest?definitionId=1&branchName=master)
-[![Fuzzing Status](https://oss-fuzz-build-logs.storage.googleapis.com/badges/php.svg)](https://bugs.chromium.org/p/oss-fuzz/issues/list?sort=-opened&can=1&q=proj:php)
+4. **Distribución del OVR:**  
+   Un aspecto clave del análisis fue la distribución del OVR (Overall Rating), una métrica fundamental en el dataset. Para esto, construimos un histograma que nos permitió observar cómo se distribuyen las calificaciones entre los jugadores. Adicionalmente, agregamos una curva de densidad que nos dio una mejor idea sobre la concentración de los valores.
 
-## Documentation
+5. **Análisis por posición:**  
+   Exploramos las posiciones de los jugadores y su relación con el OVR. Mediante un diagrama de caja (boxplot), visualizamos cómo varían las calificaciones en función de la posición de los jugadores, lo cual reveló información valiosa sobre la distribución de habilidades entre diferentes roles en el campo.
 
-The PHP manual is available at [php.net/docs](https://php.net/docs).
+6. **Matriz de correlación:**  
+   Para identificar posibles relaciones entre atributos, generamos una matriz de correlación que nos mostró cómo variables como la velocidad (PAC), tiro (SHO), defensa (DEF), entre otras, se correlacionan entre sí y con el OVR. Esta matriz fue representada gráficamente mediante un mapa de calor que facilitó la interpretación visual de las correlaciones más significativas.
 
-## Installation
+7. **Mejores jugadores y equipos:**  
+   Finalmente, identificamos los jugadores con las mejores calificaciones dentro de cada liga, así como los equipos con los OVR medios más altos. Visualizamos los 30 equipos más destacados en un gráfico de barras, lo que nos permitió comprender mejor cómo se distribuyen los mejores jugadores entre los clubes.
 
-### Prebuilt packages and binaries
+## Segunda parte: Implementación del Algoritmo y Visualización de Resultados
+En el proyecto, implementamos el algoritmo K-means con diferentes métricas de distancia para agrupar datos de interés. Cada uno de los integrantes del equipo trabajó con una métrica diferente: la distancia Euclidiana, la distancia de Manhattan (L1), y la distancia de Mahalanobis.
 
-Prebuilt packages and binaries can be used to get up and running fast with PHP.
+Tras cargar los datos, procedimos a realizar una limpieza y preparación. Esto incluyó la imputación de valores faltantes, principalmente en las columnas relacionadas con los atributos de los porteros, donde los valores faltantes se reemplazaron por ceros.
 
-For Windows, the PHP binaries can be obtained from
-[windows.php.net](https://windows.php.net). After extracting the archive the
-`*.exe` files are ready to use.
+Luego de esta fase inicial, aplicamos transformaciones adicionales sobre los datos. Esto incluyó la codificación de variables categóricas, como el pie preferido y la nacionalidad, mediante la técnica de codificación numérica. A continuación, utilizamos un imputador para reemplazar cualquier valor faltante restante con la mediana de cada columna.
 
-For other systems, see the [installation chapter](https://php.net/install).
+El siguiente paso fue aplicar el método del codo para determinar el número óptimo de clusters (k) en cada una de las implementaciones. Graficamos el WCSS (Within-Cluster Sum of Squares) para diferentes valores de k y elegimos un valor adecuado basado en la visualización de la gráfica.
 
-### Building PHP source code
+Una vez determinado el número de clusters, procedimos con la implementación del algoritmo K-means en cada una de las versiones (tipos de distancias).
 
-*For Windows, see [Build your own PHP on Windows](https://wiki.php.net/internals/windows/stepbystepbuild_sdk_2).*
+Adicionalmente, implementamos una visualización de los resultados utilizando la técnica de Análisis de Componentes Principales (PCA), la cual nos permitió reducir las dimensiones de los datos y graficar los clusters en 2 y 3 dimensiones. De esta manera, logramos observar de manera más clara cómo se agruparon los datos y la distribución de los centroides en el espacio reducido.
 
-For a minimal PHP build from Git, you will need autoconf, bison, and re2c. For
-a default build, you will additionally need libxml2 and libsqlite3.
-
-On Ubuntu, you can install these using:
-
-    sudo apt install -y pkg-config build-essential autoconf bison re2c \
-                        libxml2-dev libsqlite3-dev
-
-On Fedora, you can install these using:
-
-    sudo dnf install re2c bison autoconf make libtool ccache libxml2-devel sqlite-devel
-
-Generate configure:
-
-    ./buildconf
-
-Configure your build. `--enable-debug` is recommended for development, see
-`./configure --help` for a full list of options.
-
-    # For development
-    ./configure --enable-debug
-    # For production
-    ./configure
-
-Build PHP. To speed up the build, specify the maximum number of jobs using `-j`:
-
-    make -j4
-
-The number of jobs should usually match the number of available cores, which
-can be determined using `nproc`.
-
-## Testing PHP source code
-
-PHP ships with an extensive test suite, the command `make test` is used after
-successful compilation of the sources to run this test suite.
-
-It is possible to run tests using multiple cores by setting `-jN` in
-`TEST_PHP_ARGS`:
-
-    make TEST_PHP_ARGS=-j4 test
-
-Shall run `make test` with a maximum of 4 concurrent jobs: Generally the maximum
-number of jobs should not exceed the number of cores available.
-
-The [qa.php.net](https://qa.php.net) site provides more detailed info about
-testing and quality assurance.
-
-## Installing PHP built from source
-
-After a successful build (and test), PHP may be installed with:
-
-    make install
-
-Depending on your permissions and prefix, `make install` may need super user
-permissions.
-
-## PHP extensions
-
-Extensions provide additional functionality on top of PHP. PHP consists of many
-essential bundled extensions. Additional extensions can be found in the PHP
-Extension Community Library - [PECL](https://pecl.php.net).
-
-## Contributing
-
-The PHP source code is located in the Git repository at
-[github.com/php/php-src](https://github.com/php/php-src). Contributions are most
-welcome by forking the repository and sending a pull request.
-
-Discussions are done on GitHub, but depending on the topic can also be relayed
-to the official PHP developer mailing list internals@lists.php.net.
-
-New features require an RFC and must be accepted by the developers. See
-[Request for comments - RFC](https://wiki.php.net/rfc) and
-[Voting on PHP features](https://wiki.php.net/rfc/voting) for more information
-on the process.
-
-Bug fixes don't require an RFC. If the bug has a GitHub issue, reference it in
-the commit message using `GH-NNNNNN`. Use `#NNNNNN` for tickets in the old
-[bugs.php.net](https://bugs.php.net) bug tracker.
-
-    Fix GH-7815: php_uname doesn't recognise latest Windows versions
-    Fix #55371: get_magic_quotes_gpc() throws deprecation warning
-
-See [Git workflow](https://wiki.php.net/vcs/gitworkflow) for details on how pull
-requests are merged.
-
-### Guidelines for contributors
-
-See further documents in the repository for more information on how to
-contribute:
-
-- [Contributing to PHP](/CONTRIBUTING.md)
-- [PHP coding standards](/CODING_STANDARDS.md)
-- [Mailing list rules](/docs/mailinglist-rules.md)
-- [PHP release process](/docs/release-process.md)
-
-## Credits
-
-For the list of people who've put work into PHP, please see the
-[PHP credits page](https://php.net/credits.php).
+Finalmente, los 3 miembros del equipo comparamos los resultados obtenidos con las diferentes distancias para evaluar cómo la elección de la métrica afectaba la calidad del clustering y la separación entre los grupos.
